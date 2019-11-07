@@ -1,10 +1,11 @@
 {
   "name": "teamtrees-prediction",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Predicts when #teamtrees will meet their goal.",
   "main": "main.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodejs main.js"
   },
   "repository": {
     "type": "git",
