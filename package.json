@@ -1,0 +1,32 @@
+{
+  "name": "teamtrees-prediction",
+  "version": "1.0.0",
+  "description": "Predicts when #teamtrees will meet their goal.",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kaylathedev/teamtrees-prediction.git"
+  },
+  "keywords": [
+    "teamtrees",
+    "data"
+  ],
+  "author": "Kayla Colflesh",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/kaylathedev/teamtrees-prediction/issues"
+  },
+  "homepage": "https://github.com/kaylathedev/teamtrees-prediction#readme",
+  "dependencies": {
+    "cheerio": "^1.0.0-rc.3",
+    "fs": "0.0.1-security",
+    "js-yaml": "^3.13.1",
+    "moment": "^2.24.0",
+    "regression": "^2.0.1",
+    "request-promise-native": "^1.0.8",
+    "twitter": "^1.7.1"
+  }
+}
