@@ -20,6 +20,43 @@ twitter.prototype.tweet = function (status) {
   });
 };
 
+function log(text) {
+  console.log(text);
+
+  if (!fs.existsSync('logs')) {
+    fs.mkdirSync('logs');
+  }
+
+  var logFile = '';
+  if (fs.existsSync('logs/output.log')) {
+    logFile = fs.readFileSync('logs/output.log');
+  }
+  logFile += text + '\n';
+  fs.writeFileSync('logs/output.log', logFile);
+}
+
+function logError(text) {
+  console.log('error:', text);
+
+  if (!fs.existsSync('logs')) {
+    fs.mkdirSync('logs');
+  }
+
+  var logFile = '';
+  if (fs.existsSync('logs/output.log')) {
+    logFile = fs.readFileSync('logs/output.log');
+  }
+  logFile += text + '\n';
+  fs.writeFileSync('logs/output.log', logFile);
+
+  var errorlogFile = '';
+  if (fs.existsSync('logs/error.log')) {
+    errorlogFile = fs.readFileSync('logs/error.log');
+  }
+  errorlogFile += text + '\n';
+  fs.writeFileSync('logs/error.log', errorlogFile);
+}
+
 function sleep(ms) {
   return new Promise(resolve => {
     setTimeout(resolve, ms);
@@ -69,14 +106,12 @@ function predictXWithKnownYValue(curve, yValue, xValueStart, increment) {
   return nextXValue;
 }
 
-async function scrapeTotalTrees(client) {
-
-}
 (async function () {
 
   var client = new twitter(credentials);
 
   while (true) {
+    var localDate = new Date();
     try {
 
       const LAST_TWEET_TIME_FILENAME = 'last-tweet.txt';
@@ -85,12 +120,6 @@ async function scrapeTotalTrees(client) {
       var lastTweetDate = 0;
       if (fs.existsSync('last-tweet.txt')) {
         lastTweetDate = parseInt(fs.readFileSync(LAST_TWEET_TIME_FILENAME));
-      }
-      var localDate = new Date();
-      if (lastTweetDate + waitTime >= localDate.getTime()) {
-        // not time to tweet :-(
-        await sleep(1000); // prevents overloading our cpu
-        continue;
       }
 
       var req = await request('https://teamtrees.org/', {
@@ -120,15 +149,19 @@ async function scrapeTotalTrees(client) {
 
       var finishDate = new Date(predictXWithKnownYValue(curve, 20000000, new Date(when).getTime(), 60 * 60));
 
-      var status = convertNumbertoHuman(totalTrees) + ' trees donated so far!\n\nIt is ' + convertDateToHuman(when) + '\n\nAt least 20 million trees expected by ' + convertDateToHuman(finishDate);
+      if (lastTweetDate + waitTime < localDate.getTime()) {
+        // time to tweet :-)
+        var status = convertNumbertoHuman(totalTrees) + ' trees donated so far!\n\nIt is ' + convertDateToHuman(when) + '\n\nAt least 20 million trees expected by ' + convertDateToHuman(finishDate) + ' #TeamTrees';
+        await client.tweet(status);
+        log(localDate.toISOString() + ', tweet tweet, trees: ' + totalTrees + ', estimated completetion: ', finishDate.toISOString());
+        fs.writeFileSync(LAST_TWEET_TIME_FILENAME, localDate.getTime());
+      } else {
+        log(localDate.toISOString() + ', trees: ' + totalTrees + ', estimated completetion: ' + finishDate.toISOString());
+      }
 
-      await client.tweet(status);
-      console.log('tweet tweet at ', localDate.toLocaleString());
-      fs.writeFileSync(LAST_TWEET_TIME_FILENAME, localDate.getTime());
-
-      //await sleep(1000 * 60 * 30); // 30 minutes
+      await sleep(1000 * 60 * 5); // 5 minutes
     } catch (error) {
-      console.log(error);
+      logError(localDate.toISOString() + ', ' + JSON.stringify(error));
     }
   }
 

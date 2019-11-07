@@ -1,0 +1,5 @@
+twitter-credentials.json
+logs
+node_modules/
+last-tweet.txt
+.directory

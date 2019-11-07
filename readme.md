@@ -1,7 +1,6 @@
- 
 # \#TeamTrees Prediction Twitter Bot
 
-This application will tweet the predicted completetion date of the #TeamTrees fundraiser.
+This NodeJS application will tweet the predicted completetion date of the [#TeamTrees](https://teamtrees.org/) fundraiser.
 
 The data is stored in `team-trees-history.yaml` and the app computes a best line of fit using a "linear" algorithim. It ignores everything before November 1st *(because most of the huge donations happened in October)*
 
